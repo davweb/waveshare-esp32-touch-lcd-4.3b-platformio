@@ -9,7 +9,7 @@
     #define CONNECTION_TIMEOUT_MS 400
 #else
     #define CONNECTION_INTERVAL_MS 500
-    #define CONNECTION_TIMEOUT_MS 5000
+    #define CONNECTION_TIMEOUT_MS 10000
 #endif
 
 
@@ -91,4 +91,8 @@ String getLocalIpAddress() {
     #else
         return isWiFiConnected() ? WiFi.localIP().toString() : "";
     #endif
+}
+
+String getMacAddress() {
+    return WiFi.macAddress();
 }

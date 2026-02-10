@@ -28,3 +28,10 @@ bool isWiFiConnected();
  * connected to a WiFi network, an empty string otherwise.
 */
 String getLocalIpAddress();
+
+/**
+ * Get the Mac address of the device a string.
+ *
+ * @return The MAC address of the device as a string.
+*/
+String getMacAddress();
