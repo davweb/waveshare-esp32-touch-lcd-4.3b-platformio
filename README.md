@@ -19,7 +19,6 @@ The working features are:
 * Development and Production Builds
 
 The features still to add are:
-* WiFi
 * Touchscreen
 * Backlight adjustment
 * Clock

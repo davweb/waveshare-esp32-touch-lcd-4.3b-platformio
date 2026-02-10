@@ -3,7 +3,8 @@
 #include <esp_display_panel.hpp>
 #include <lvgl.h>
 #include <lvgl_v8_port.h>
-#include "Board.h"
+#include <Board.h>
+#include <Wireless.h>
 
 using namespace esp_panel::drivers;
 
@@ -13,6 +14,8 @@ void setup()
 
     // Wait for serial port to connect
     delay(5000);
+
+    startWiFi();
 
     Board *board = initialiseBoard();
 
