@@ -16,20 +16,22 @@ The working features are:
 * WiFi
 * LVGL
 * Logging
+* Clock
+* HTTP Requests
+* JSON Parsing
 * Development and Production Builds
 
 The features still to add are:
 * Touchscreen
-* Backlight adjustment
-* Clock
 * Remote Debugging
-* HTTP Requests
-* JSON Parsing
 * [Squareline Studio][2] UI
 
 The excluded features are:
 * Bluetooth
 * Working with the SD Card
+* Backlight adjustment
+  - The backlight is either on or off and the screen is unreadable with it off
+    so not much value here.
 
 # References
 

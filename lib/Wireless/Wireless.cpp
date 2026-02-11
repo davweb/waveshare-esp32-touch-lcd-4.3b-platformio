@@ -86,13 +86,9 @@ bool isWiFiConnected() {
 }
 
 String getLocalIpAddress() {
-    #ifndef WIFI_SSID
-        return "";
-    #else
-        return isWiFiConnected() ? WiFi.localIP().toString() : "";
-    #endif
+    return isWiFiConnected() ? WiFi.localIP().toString() : "";
 }
 
 String getMacAddress() {
-    return WiFi.macAddress();
+    return isWiFiConnected() ? WiFi.macAddress() : "";
 }

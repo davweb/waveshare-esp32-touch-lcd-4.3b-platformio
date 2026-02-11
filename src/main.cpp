@@ -5,14 +5,15 @@
 #include <lvgl_v8_port.h>
 #include <Board.h>
 #include <Wireless.h>
+#include <ClockTools.h>
 
 using namespace esp_panel::drivers;
 
 uint8_t grid_row = 0;
 lv_obj_t * grid_container = NULL;
+lv_obj_t* timeValue = NULL;
 
-
-void add_row(const char *  labelText, const char * valueText) {
+lv_obj_t* add_row(const char *  labelText, const char * valueText) {
     LOG_DEBUG("Adding row", labelText, valueText);
     lv_obj_t * label = lv_label_create(grid_container);
     lv_label_set_text(label, labelText);
@@ -25,10 +26,12 @@ void add_row(const char *  labelText, const char * valueText) {
     lv_obj_set_grid_cell(value, LV_GRID_ALIGN_START, 1, 1, LV_GRID_ALIGN_CENTER, grid_row, 1);
 
     grid_row += 1;
+
+    return value;
 }
 
-void add_row(const char *  labelText, String valueText) {
-    add_row(labelText, valueText.c_str());
+lv_obj_t* add_row(const char *  labelText, String valueText) {
+    return add_row(labelText, valueText.c_str());
 }
 
 void create_grid_widget(void)
@@ -45,6 +48,18 @@ void create_grid_widget(void)
     lv_obj_set_style_grid_row_dsc_array(grid_container, row_dsc, 0);
 }
 
+String getPanelVersion() {
+    char panel_version[9];
+    sprintf(panel_version, "%d.%d.%d", ESP_PANEL_VERSION_MAJOR, ESP_PANEL_VERSION_MINOR, ESP_PANEL_VERSION_PATCH);
+    return String(panel_version);
+}
+
+String getLvglVersion() {
+    char lvgl_version[9];
+    sprintf(lvgl_version, "%d.%d.%d", LVGL_VERSION_MAJOR, LVGL_VERSION_MINOR, LVGL_VERSION_PATCH);
+    return String(lvgl_version);
+}
+
 void setup()
 {
     Serial.begin(115200);
@@ -56,14 +71,10 @@ void setup()
 
     startWiFi();
 
+    setRtcClock();
+
     LOG_DEBUG("Initializing LVGL");
     lvgl_port_init(board->getLCD(), board->getTouch());
-
-    // Collect values
-    char panel_version[9];
-    sprintf(panel_version, "%d.%d.%d", ESP_PANEL_VERSION_MAJOR, ESP_PANEL_VERSION_MINOR, ESP_PANEL_VERSION_PATCH);
-    char lvgl_version[9];
-    sprintf(lvgl_version, "%d.%d.%d", LVGL_VERSION_MAJOR, LVGL_VERSION_MINOR, LVGL_VERSION_PATCH);
 
     LOG_DEBUG("Creating UI");
     /* Lock the mutex due to the LVGL APIs are not thread-safe */
@@ -71,13 +82,15 @@ void setup()
 
     create_grid_widget();
 
+    add_row("Chip Model", ESP.getChipModel() + String(" revision ") + String(ESP.getChipRevision()));
     add_row("SDK Version", ESP.getSdkVersion());
     add_row("Core Version", ESP.getCoreVersion());
-    add_row("ESP32_Display_Panel Version", panel_version);
-    add_row("LVGL Version", lvgl_version);
+    add_row("ESP32_Display_Panel Version", getPanelVersion());
+    add_row("LVGL Version", getLvglVersion());
     add_row("MAC Address", getMacAddress());
     add_row("IP Address", getLocalIpAddress());
-    add_row("Chip Model", ESP.getChipModel() + String(" revision ") + String(ESP.getChipRevision()));
+    add_row("Timezone", getTimezone());
+    timeValue = add_row("Date and Time", getCurrentDateTime());
 
     /* Release the mutex */
     lvgl_port_unlock();
@@ -85,6 +98,10 @@ void setup()
 
 void loop()
 {
+    lvgl_port_lock(-1);
+    lv_label_set_text(timeValue, getCurrentDateTime().c_str());
+    lvgl_port_unlock();
+
     LOG_DEBUG("Idle loop");
     delay(1000);
 }
