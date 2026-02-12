@@ -100,6 +100,7 @@ void create_grid_widget(void)
     lv_obj_set_layout(grid_container, LV_LAYOUT_GRID);
     lv_obj_set_style_grid_column_dsc_array(grid_container, col_dsc, 0);
     lv_obj_set_style_grid_row_dsc_array(grid_container, row_dsc, 0);
+    lv_obj_clear_flag(grid_container, LV_OBJ_FLAG_SCROLLABLE);
 
     lv_obj_add_event_cb(grid_container, grid_touch_event_cb, LV_EVENT_PRESSED, NULL);
 }
