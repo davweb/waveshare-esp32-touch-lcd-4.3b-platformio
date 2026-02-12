@@ -23,6 +23,8 @@ lv_obj_t* add_row(const char *  labelText, const char * valueText) {
 
     lv_obj_t * value = lv_label_create(grid_container);
     lv_label_set_text(value, valueText);
+    lv_color_t grey = lv_color_make(100, 100, 100);
+    lv_obj_set_style_text_color(value, grey, 0);
     lv_obj_set_style_text_font(value, &lv_font_montserrat_26, 0);
     lv_obj_set_grid_cell(value, LV_GRID_ALIGN_START, 1, 1, LV_GRID_ALIGN_CENTER, grid_row, 1);
 
@@ -88,8 +90,8 @@ static void grid_touch_event_cb(lv_event_t * e)
 
 void create_grid_widget(void)
 {
-    static lv_coord_t col_dsc[] = {350, LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
-    static lv_coord_t row_dsc[] = {33, 33, 33, 33, 33, 33, 33, 33, 33, 33, LV_GRID_TEMPLATE_LAST};
+    static lv_coord_t col_dsc[] = {200, LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
+    static lv_coord_t row_dsc[] = {30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, LV_GRID_TEMPLATE_LAST};
 
     /*Create a container with grid*/
     grid_container = lv_obj_create(lv_scr_act());
@@ -136,11 +138,12 @@ void setup()
 
     create_grid_widget();
 
+    add_row("Board", board->getConfig().name);
     add_row("Chip Model", ESP.getChipModel() + String(" revision ") + String(ESP.getChipRevision()));
-    add_row("SDK", ESP.getSdkVersion());
-    add_row("Core", ESP.getCoreVersion());
-    add_row("ESP32_Display_Panel", getPanelVersion());
-    add_row("LVGL", getLvglVersion());
+    add_row("SDK Version", ESP.getSdkVersion());
+    add_row("Core Version", ESP.getCoreVersion());
+    add_row("Driver Version", getPanelVersion());
+    add_row("LVGL Version", getLvglVersion());
     add_row("MAC Address", getMacAddress());
     add_row("IP Address", getLocalIpAddress());
     add_row("Timezone", getTimezone());
