@@ -20,9 +20,9 @@ The working features are:
 * HTTP Requests
 * JSON Parsing
 * Development and Production Builds
+* Touchscreen
 
 The features still to add are:
-* Touchscreen
 * Remote Debugging
 * [Squareline Studio][2] UI
 

@@ -12,12 +12,13 @@ using namespace esp_panel::drivers;
 uint8_t grid_row = 0;
 lv_obj_t * grid_container = NULL;
 lv_obj_t* timeValue = NULL;
+lv_obj_t* touchValue = NULL;
 
 lv_obj_t* add_row(const char *  labelText, const char * valueText) {
     LOG_DEBUG("Adding row", labelText, valueText);
     lv_obj_t * label = lv_label_create(grid_container);
     lv_label_set_text(label, labelText);
-    lv_obj_set_style_text_font(label, &lv_font_montserrat_20, 0);
+    lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
     lv_obj_set_grid_cell(label, LV_GRID_ALIGN_END, 0, 1, LV_GRID_ALIGN_CENTER, grid_row, 1);
 
     lv_obj_t * value = lv_label_create(grid_container);
@@ -34,6 +35,30 @@ lv_obj_t* add_row(const char *  labelText, String valueText) {
     return add_row(labelText, valueText.c_str());
 }
 
+static void grid_touch_event_cb(lv_event_t * e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    if(code == LV_EVENT_PRESSED) {
+        lv_indev_t * indev = lv_indev_get_act();
+
+        if (indev == NULL) {
+            return;
+        }
+
+        lv_point_t point;
+        lv_indev_get_point(indev, &point);
+
+        char coordinates[8];
+        sprintf(coordinates, "%d,%d", point.x, point.y);
+
+        LOG_DEBUG("Touch at", coordinates);
+
+        lvgl_port_lock(-1);
+        lv_label_set_text(touchValue, coordinates);
+        lvgl_port_unlock();
+    }
+}
+
 void create_grid_widget(void)
 {
     static lv_coord_t col_dsc[] = {350, LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
@@ -46,6 +71,8 @@ void create_grid_widget(void)
     lv_obj_set_layout(grid_container, LV_LAYOUT_GRID);
     lv_obj_set_style_grid_column_dsc_array(grid_container, col_dsc, 0);
     lv_obj_set_style_grid_row_dsc_array(grid_container, row_dsc, 0);
+
+    lv_obj_add_event_cb(grid_container, grid_touch_event_cb, LV_EVENT_PRESSED, NULL);
 }
 
 String getPanelVersion() {
@@ -91,6 +118,7 @@ void setup()
     add_row("IP Address", getLocalIpAddress());
     add_row("Timezone", getTimezone());
     timeValue = add_row("Date and Time", getCurrentDateTime());
+    touchValue = add_row("Last Touch", "");
 
     /* Release the mutex */
     lvgl_port_unlock();
