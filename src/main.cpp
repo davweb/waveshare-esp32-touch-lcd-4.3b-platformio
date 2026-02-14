@@ -137,6 +137,9 @@ void setup()
     /* Lock the mutex due to the LVGL APIs are not thread-safe */
     lvgl_port_lock(-1);
 
+    // Prevent the active screen from being scrolled at all
+    lv_obj_clear_flag(lv_scr_act(), LV_OBJ_FLAG_SCROLLABLE);
+
     create_grid_widget();
 
     add_row("Board", board->getConfig().name);
